@@ -1,4 +1,5 @@
 import socketserver
+import response
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -18,8 +19,18 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # just send back the same data, but upper-cased
         self.request.sendall(self.data.upper())
 
+
 if __name__ == "__main__":
     HOST, PORT = "0.0.0.0", 8000
+
+    '''
+    RESPONSE TESTS
+    print("not found", response.notFound(),flush=True)
+    print("redirect", response.redirect("/yo"), flush=True)
+    print("forbidden", response.forbidden(), flush=True)
+    print("ok", response.ok("text/plain; charset=utf-8", "LOL".encode()), flush=True)
+    print("file", response.file("front_end/index.html"), flush=True)
+    '''
 
     # Create the server, binding to localhost on port 9999
     with socketserver.ThreadingTCPServer((HOST, PORT), MyTCPHandler) as server:

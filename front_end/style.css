@@ -3,6 +3,14 @@ body {
     color: #000000;
 }
 
+p{
+    font-family: 'Work Sans', sans-serif;
+}
+
+label{
+    font-family: 'Work Sans', sans-serif;
+}
+
 h1{
     font-family: 'Bitter', serif;
 }

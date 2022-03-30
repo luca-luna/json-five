@@ -38,6 +38,45 @@ def parse_headers(headers: bytes):
         myHeaders[splits[0].strip()] = splits[1].strip()
     return myHeaders
 
+def parse_form(bytes_request, bytes_boundary):
+    boundary = b'--' + bytes_boundary
+    terminating_boundary = boundary + b'--'
+    form_data = {}
+    request_portion = bytes_request
+    end = False
+    while not end:
+        section_start = request_portion.find(boundary)
+        request_portion = request_portion[section_start + len(boundary):]
+
+        input_start = request_portion.find(b'\r\n\r\n')
+        input_end = request_portion.find(boundary)
+
+        headers = request_portion[:input_start].decode()
+        headers = headers.split('\r\n')
+
+        header_dict = {}
+
+        for header in headers:
+            if len(header) != 0:
+                header_name_split = header.split(':')
+                header_name = header_name_split[0]
+                header_data = header_name_split[1].strip().split(";")
+                header_dict[header_name] = {"self": header_data[0].strip()}
+                for item in header_data[1:]:
+                    item_data = item.strip().split('=')
+                    header_dict[header_name][item_data[0]] = item_data[1].strip().strip('\"')
+
+        input_name = header_dict['Content-Disposition']['name']
+        input = request_portion[input_start + len(b'\r\n\r\n'):input_end].strip()
+        header_dict['input'] = input
+
+        form_data[input_name] = header_dict
+
+        if input_end == request_portion.find(terminating_boundary):
+            end = True
+
+    return form_data
+
 #Testing without having to run the server
 if __name__ == "__main__":
     sample_request = ""

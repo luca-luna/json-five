@@ -38,6 +38,40 @@ button:active{
     background-color:rgb(35, 48, 233);
 }
 
+.profile-pic{
+    border-radius: 50%;
+    height:100px;
+    width:100px;
+    border-color: white;
+    border-style: solid;
+    border-width: 5px;
+}
+
+.profile-pic:hover{
+    border-radius: 50%;
+    height:100px;
+    width:100px;
+    border-color: rgb(78, 90, 255);
+    border-style: solid;
+}
+
+.profile-pic:active{
+    border-radius: 50%;
+    height:101px;
+    width:101px;
+    border-color: rgb(78, 90, 255);
+    border-style: solid;
+}
+
+#chat-box{
+    background-color: white;
+    width: 40%;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: -2px 3px 9px rgba(0, 0, 0, 0.249);
+}
+
 
 #submit_button{
     background-color:rgb(78, 90, 255);

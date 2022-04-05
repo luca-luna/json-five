@@ -1,6 +1,9 @@
 import socketserver
 import response
 import database
+from parsing_request import Request
+from our_router import Router
+from paths import add_paths
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -11,9 +14,21 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     client.
     """
 
+     #CONSTRUCTOR
+    def __init__(self, request, client_addr, server):
+       self.router = Router()
+       add_paths(self.router)
+    
     def handle(self):
         # self.request is the TCP socket connected to the client
         self.data = self.request.recv(1024).strip()
+        
+        #BUFFERING
+        if "Content-Length" in request.headers.keys():
+            while (len(request.body) < int(request.headers["Content-Length"])):
+                self.data += self.request.recv(1024)
+                request = Request(self.data)
+        
         print("test", flush=True)
         print("{} wrote:".format(self.client_address[0]), flush=True)
         print(self.data, flush=True)

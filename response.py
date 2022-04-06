@@ -17,22 +17,9 @@ def file(filename):
     if file_type == "jpg":
         content_type = "image/jpeg"
 
-    elif file_type == "html":
-        ### testing some
-        message_collection.delete_many({})
-        username_posted_collection.delete_many({})
-        message_collection.insert_one({"message": "breakfast mac is good"})
-        username_posted_collection.insert_one(({"username": "templating_master"}))
-        message_collection.insert_one({"message": "lunch mac is good as well"})
-        username_posted_collection.insert_one(({"username": "templating_master"}))
-
-
+    elif file_type == "html"
         messages = list(message_collection.find({}, {'_id': False}))
         usernames = list(username_posted_collection.find({}, {"_id": False}))
-        print("MESSAGES")
-        print(messages)
-        print("USERNAMES")
-        print(usernames)
 
         replace = ""
         for i in range(len(messages)):

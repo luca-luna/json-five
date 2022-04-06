@@ -11,5 +11,5 @@ def homepage(request, handler):
     listToStr = ''.join([str(elem) for elem in request.path])
     
     if(listToStr == "/"):
-        response = file("./index.html")
+        response = file("front_end/index.html")
         handler.request.sendall(response)

@@ -8,6 +8,9 @@ class Request:
         [self.method, self.path, self.http_ver] = parse_request_line(request_line)
         self.headers = parse_headers(byte_headers)
         
+        #self.parts = {}
+        #self.tokens = []
+        
 def split_request(request: bytes):
     #Looking for the 1st new line character and split on that
     first_newline = request.find(Request.new_line)

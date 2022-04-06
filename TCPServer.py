@@ -1,4 +1,5 @@
 import socketserver
+import sys
 import response
 import database
 from parsing_request import Request
@@ -18,22 +19,31 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     def __init__(self, request, client_addr, server):
        self.router = Router()
        add_paths(self.router)
+       super().__init__(request, client_addr, server)
     
     def handle(self):
         # self.request is the TCP socket connected to the client
-        self.data = self.request.recv(1024).strip()
-        
+        data = self.request.recv(1024)
+        #.strip()
+        request = Request(data)
         #BUFFERING
-        if "Content-Length" in request.headers.keys():
-            while (len(request.body) < int(request.headers["Content-Length"])):
-                self.data += self.request.recv(1024)
-                request = Request(self.data)
+        print("Before Buffering")
+        akey = "Content-Length"
+        if akey in request.headers.keys():
+            while (len(request.body) < int(request.headers[akey])):
+                data += self.request.recv(1024)
+                request = Request(data)
         
-        print("test", flush=True)
-        print("{} wrote:".format(self.client_address[0]), flush=True)
-        print(self.data, flush=True)
-        # just send back the same data, but upper-cased
-        self.request.sendall(self.data.upper())
+        print("--------------------------------------------------------------------------------------------------------------------------")
+        print(data)
+        print("--------------------------------------------end of data---------------------------------------------------------------\n\n")
+        print(request.headers)
+        print("--------------------------------------------end of headers---------------------------------------------------------------\n\n")
+        
+        sys.stdout.flush()
+        sys.stderr.flush()
+        
+        self.router.handle_request(request, self)
 
 
 if __name__ == "__main__":

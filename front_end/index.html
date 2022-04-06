@@ -16,7 +16,7 @@
 
 <img class="profile-pic" src="images/whale.jpg">
 
-
+<!--Number of users online-->
 <h2>Online Users:</h2>
 <p>
 {{loop1}}
@@ -24,12 +24,13 @@
 {{end_loop1}}
 </p>
 
+<!--Live chatbox-->
 <div id="chat-box">
 <h2>Chat:</h2>
 <p>
 {{loop2}}
     {{username}}: {{message}}
-{{end_loop2
+{{end_loop2}}
 </p>
 
 <form action="/send-chat" method="post" enctype="multipart/form-data">

@@ -6,6 +6,8 @@ db = mongo_client['312-Project']
 user_collection = db['users']
 user_id_collection = db['next_id_users']
 
+username_posted_collection = db['username']
+
 message_collection = db['messages']
 message_id_collection = db['next_id_messages']
 

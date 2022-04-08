@@ -3,7 +3,7 @@ from random import randint
 from our_router import Route
 from parsing_request import parse_form
 from template import render_template
-from response import file, redirect
+from response import file, redirect, notFound
 import database
 
 def add_paths(router):
@@ -22,7 +22,12 @@ def homepage(request, handler):
     
     if(listToStr == "/"):
         response = file("front_end/index.html")
-        handler.request.sendall(response)
+    else:
+        response = notFound()
+    
+    handler.request.sendall(response)
+        
+        
 
 def send_chat(request, handler):
     bytes_boundary = request.headers['Content-Type'].split('=')[1].strip().encode()

@@ -9,6 +9,9 @@ import database
 def add_paths(router):
     router.add_route(Route('GET', "/", homepage))
     router.add_route(Route('POST', "/send-chat", send_chat))
+    router.add_route(Route('GET', "/functions.js", jsfunction))
+    router.add_route(Route('GET', "/style.css", style))
+    router.add_route(Route('GET', "/images/", images))
 
 
 def homepage(request, handler):
@@ -27,3 +30,20 @@ def send_chat(request, handler):
     database.addHomepageMessage({"message": parsed_form['chat message']['input'].decode(), "username": str(randint(0, 1000))})
     print("inserted", flush=True)
     handler.request.sendall(redirect("/"))
+
+def jsfunction(request, handler):
+    response = file("front_end/functions.js")
+    handler.request.sendall(response)
+    
+def style(request, handler):
+    response = file("front_end/style.css")
+    handler.request.sendall(response)
+    
+def images(request, handler):
+    path_prefix = "/images/"
+    image_name = request.path[request.path.find(path_prefix) + len(path_prefix):]
+    print("Our image")
+    print(image_name)
+    image_name = image_name.replace("/", "")
+    response = file("front_end/images/" + image_name)
+    handler.request.sendall(response)

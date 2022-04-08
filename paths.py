@@ -7,11 +7,14 @@ from response import file, redirect
 import database
 
 def add_paths(router):
-    router.add_route(Route('GET', "/", homepage))
+    #Adding Routes to our router
     router.add_route(Route('POST', "/send-chat", send_chat))
     router.add_route(Route('GET', "/functions.js", jsfunction))
     router.add_route(Route('GET', "/style.css", style))
     router.add_route(Route('GET', "/images/", images))
+    
+    #ALWAYS Keeping this at last, if you wish to add more Routes, add it above this line
+    router.add_route(Route('GET', "/", homepage))
 
 
 def homepage(request, handler):

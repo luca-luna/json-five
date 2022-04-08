@@ -39,7 +39,12 @@ class Route:
     def is_request_match(self, request: Request):
         if request.method != self.method:
             return False
+        print("self path")
+        print(self.path)
+        print("request.path")
+        print(request.path)
         search_result = re.search('^' + self.path, request.path)
+        print(search_result)
         if search_result:
             return True
         else:

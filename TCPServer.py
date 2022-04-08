@@ -28,11 +28,11 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         request = Request(data)
         #BUFFERING
         print("Before Buffering")
-        akey = "Content-Length"
-        if akey in request.headers.keys():
-            while (len(request.body) < int(request.headers[akey])):
+        if "Content-Length" in request.headers.keys():
+            while (len(request.body) < int(request.headers["Content-Length"])):
                 data += self.request.recv(1024)
                 request = Request(data)
+            self.data = data
         
         print("--------------------------------------------------------------------------------------------------------------------------")
         print(data)

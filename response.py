@@ -1,6 +1,8 @@
 import parse
-from database import message_collection
+from database import message_collection, listHomepageMessages
 from database import username_posted_collection
+from template import render_template
+
 
 def file(filename):
 
@@ -17,21 +19,26 @@ def file(filename):
     if file_type == "jpg":
         content_type = "image/jpeg"
 
-    elif file_type == "html"
-        messages = list(message_collection.find({}, {'_id': False}))
-        usernames = list(username_posted_collection.find({}, {"_id": False}))
+    elif file_type == "html":
+        print(listHomepageMessages(), flush=True)
+        content = render_template(filename, {"loop_data2": listHomepageMessages()}).encode()
+        print(content, flush=True)
+        content_type = "text/html; charset=utf-8"
 
-        replace = ""
-        for i in range(len(messages)):
-            replace += "<p>"
-            replace += usernames[i]["username"] + ">> "
-            replace += messages[i]["message"]
-            replace += "</p>"
-
-        content = content.replace(b"{{loop2}}", b"")
-        content = content.replace(b"{{end_loop2}}", b"")
-        content = content.replace(b"{{username}}: {{message}}", replace.encode())
-        content_type = "text/" + file_type + "; charset=utf-8"
+        # messages = list(message_collection.find({}, {'_id': False}))
+        # usernames = list(username_posted_collection.find({}, {"_id": False}))
+        #
+        # replace = ""
+        # for i in range(len(messages)):
+        #     replace += "<p>"
+        #     replace += usernames[i]["username"] + ">> "
+        #     replace += messages[i]["message"]
+        #     replace += "</p>"
+        #
+        # content = content.replace(b"{{loop2}}", b"")
+        # content = content.replace(b"{{end_loop2}}", b"")
+        # content = content.replace(b"{{username}}: {{message}}", replace.encode())
+        # content_type = "text/" + file_type + "; charset=utf-8"
 
     else:
         content_type = "text/" + file_type + "; charset=utf-8"
@@ -39,6 +46,7 @@ def file(filename):
     print("content type", content_type, flush=True)
 
     response = ok(content_type, content)
+    # print(respost, flush=True)
 
     return response
 

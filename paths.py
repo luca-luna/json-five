@@ -1,10 +1,13 @@
 from random import randint
+from TCPServer import MyTCPHandler
 
 from our_router import Route
 from parsing_request import parse_form
 from template import render_template
-from response import file, redirect, notFound
+from response import file, redirect, notFound, websocket_handshake
+from websocket import compute_accept
 import database
+import random
 
 def add_paths(router):
     #Adding Routes to our router
@@ -12,6 +15,8 @@ def add_paths(router):
     router.add_route(Route('GET', "/functions.js", jsfunction))
     router.add_route(Route('GET', "/style.css", style))
     router.add_route(Route('GET', "/images/", images))
+    router.add_route(Route('GET', '/websocket', websocket_request))
+    router.add_route(Route('GET', '/chat-history', chat_history))
     
     #ALWAYS Keeping this at last, if you wish to add more Routes, add it above this line
     router.add_route(Route('GET', "/", homepage))
@@ -55,3 +60,22 @@ def images(request, handler):
     image_name = image_name.replace("/", "")
     response = file("front_end/images/" + image_name)
     handler.request.sendall(response)
+
+def chat_history(request, handler):
+    #dummy data
+    history = [{'username': 'user1', 'comment': 'hello'},
+               {'username': 'user2', 'comment': 'welcome'}]
+    #Sean ATTN, we just have to make this response too           
+    #response = generate_response(json.dumps(history).encode(), 'application/json; charset=utf-8')
+    #handler.request.sendall(response)
+
+def websocket_request(request, handler):
+    key = request.headers["Sec-WebSocket-Key"]
+    accept = compute_accept(key)
+    response = websocket_handshake(accept)
+    handler.request.sendall(response)
+
+    username="User"+str(random.randint(0,1000))
+    MyTCPHandler.websocket_connections.append({'username':username, 'socket':handler})
+    while True:
+        ws_frame_raw = handler.request.recv(1024)

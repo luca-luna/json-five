@@ -63,6 +63,12 @@ def ok(content_type, message):
     print("response", response, flush=True)
     return response
 
+def websocket_handshake(accept):
+
+    #Sean ATTN, kept it like this for now
+    response = ("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: " + accept + "\r\n\r\n").encode()
+    return response
+
 
 def redirect(new_location):
     return ("HTTP/1.1 301 Moved Permanently\r\nContent-Length: 0\r\nLocation: " + new_location + "\r\n\r\n").encode()

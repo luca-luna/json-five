@@ -14,7 +14,11 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     override the handle() method to implement communication to the
     client.
     """
-
+    counter = 0
+    #Storing the websocket connections 
+    websocket_connections = []
+    #Storing the usernames for the connections
+    #user_dictionary = {}
      #CONSTRUCTOR
     def __init__(self, request, client_addr, server):
        self.router = Router()

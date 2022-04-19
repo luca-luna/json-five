@@ -40,7 +40,9 @@ def send_chat(request, handler):
     print(request.body, flush=True)
     print(parse_form(request.body, bytes_boundary), flush=True)
     parsed_form = parse_form(request.body, bytes_boundary)
-    database.addHomepageMessage({"message": parsed_form['chat message']['input'].decode(), "username": str(randint(0, 1000))})
+    message = escape_html(parsed_form['chat message']['input'].decode())
+    username = escape_html(str(randint(0, 1000)))
+    database.addHomepageMessage({"message": message, "username": username})
     print("inserted", flush=True)
     handler.request.sendall(redirect("/"))
 
@@ -79,3 +81,6 @@ def websocket_request(request, handler):
     MyTCPHandler.websocket_connections.append({'username':username, 'socket':handler})
     while True:
         ws_frame_raw = handler.request.recv(1024)
+
+def escape_html(input):
+    return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")

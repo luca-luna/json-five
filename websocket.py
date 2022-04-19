@@ -9,3 +9,14 @@ def compute_accept(key):
     sha1_websocket_accept.update(websocket_accept)
     base64_encoded_websocket_accept = b64encode(sha1_websocket_accept.digest())
     return base64_encoded_websocket_accept
+
+
+def handshake_testing():
+    key = "pBsd/kMCnKG4uza2TYIuLg=="
+    expected = "5LphbGU7Oze7/0+7dcVnuPaZXzM="
+    
+    accept = compute_accept(key)
+    assert accept == expected, accept + "is not the same as" + expected
+    
+# def test_parsing_frame():
+#     print()

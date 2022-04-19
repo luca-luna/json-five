@@ -47,37 +47,7 @@ def render_loop(template, data):
         final_content = template[:start_index] + template[end_index + len(loop_end_tag):]
 
         return final_content
-    # if "loop_data" in data.keys():
-    #     start_tag = "{{loop}}"
-    #     end_tag = "{{end_loop}}"
-    #
-    #     start_index = template.find(start_tag)
-    #     end_index = template.find(end_tag)
-    #
-    #     start_if_tag = "{{if image}}"
-    #     end_if_tag = "{{end_if}}"
-    #
-    #     start_if_index = template.find(start_if_tag)
-    #     end_if_index = template.find(end_if_tag)
-    #
-    #     #template for the body of the loop
-    #     loop_before_template = template[start_index + len(start_tag): start_if_index]
-    #     if_template = template[start_if_index + len(start_if_tag): end_if_index]
-    #     loop_after_template = template[end_if_index + len(end_if_tag): end_index]
-    #     loop_data = data["loop_data"]
-    #     loop_content = ""
-    #
-    #     for single_content in loop_data:
-    #         loop_content += replace_placeholders(loop_before_template, single_content)
-    #         loop_content += replace_placeholders(if_template, single_content)
-    #         loop_content += replace_placeholders(loop_after_template, single_content)
-    #
-    #
-    #     final_content = template[:start_index] + loop_content + template[end_index + len(end_tag):]
-    #
-    #     return final_content
-    # else:
-    #     return template
+    
 
 
 def render_loop_2(template, data):

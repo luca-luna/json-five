@@ -4,10 +4,10 @@ from TCPServer import MyTCPHandler
 from our_router import Route
 from parsing_request import parse_form
 from template import render_template
-from response import file, redirect, notFound, websocket_handshake
+from response import file, redirect, notFound, websocket_handshake, generate_response
 from websocket import compute_accept
-import database
-import random
+import database, random, json
+
 
 def add_paths(router):
     #Adding Routes to our router
@@ -68,8 +68,8 @@ def chat_history(request, handler):
     history = [{'username': 'user1', 'comment': 'hello'},
                {'username': 'user2', 'comment': 'welcome'}]
     #Sean ATTN, we just have to make this response too           
-    #response = generate_response(json.dumps(history).encode(), 'application/json; charset=utf-8')
-    #handler.request.sendall(response)
+    response = generate_response(json.dumps(history).encode(), 'application/json; charset=utf-8', '200 OK')
+    handler.request.sendall(response)
 
 def websocket_request(request, handler):
     key = request.headers["Sec-WebSocket-Key"]

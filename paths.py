@@ -81,6 +81,10 @@ def websocket_request(request, handler):
     MyTCPHandler.websocket_connections.append({'username':username, 'socket':handler})
     while True:
         ws_frame_raw = handler.request.recv(1024)
+        # while (readBytes < payloadLen):
+        #     ws_frame_raw += handler.request.recv(1024)
+        
+
 
 def escape_html(input):
     return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")

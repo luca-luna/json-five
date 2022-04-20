@@ -85,5 +85,3 @@ def redirect(new_location):
 
 def notFound():
      return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 36\r\n\r\nThe requested content does not exist".encode()
-
-

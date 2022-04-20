@@ -7,6 +7,7 @@ from template import render_template
 from response import file, redirect, notFound, websocket_handshake, generate_response
 from websocket import compute_accept
 import database, random, json
+import websocket
 
 
 def add_paths(router):
@@ -81,9 +82,30 @@ def websocket_request(request, handler):
     MyTCPHandler.websocket_connections.append({'username':username, 'socket':handler})
     while True:
         ws_frame_raw = handler.request.recv(1024)
-        # while (readBytes < payloadLen):
-        #     ws_frame_raw += handler.request.recv(1024)
-        
+        ws_frame = websocket.WSFrame(ws_frame_raw)
+        if ws_frame.opcode == 8:
+            print("disconnecting")
+            print(MyTCPHandler.websocket_connections)
+            to_delete = None
+            for connection in MyTCPHandler.websocket_connections:
+                if connection['socket'] == handler:
+                    to_delete = connection
+            if to_delete:
+                MyTCPHandler.websocket_connections.remove(to_delete)
+            print(MyTCPHandler.websocket_connections)
+            break
+
+        while not ws_frame.finished_buffering:
+            ws_frame_raw += handler.request.recv(1024)
+            ## add buffering code here, call check_payload()
+
+
+        ws_frame.extract_payload()
+        message_json = ws_frame.payload.decode()
+        message = json.loads(message_json)
+        message_type = message['messageType']
+
+
 
 
 def escape_html(input):

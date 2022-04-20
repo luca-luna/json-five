@@ -73,7 +73,14 @@ class WSFrame:
 
 
     def check_payload(self):
-        return
+        offset = self.first_mask_or_payload_byte
+        if self.maskbit == 1:
+            offset=offset+4
+        raw_payload =self.frame_bytes[offset:]
+        if len(raw_payload) < self.payload_length:
+            return
+        else: 
+            self.finished_buffering = True
 
 
     def extract_payload(self):

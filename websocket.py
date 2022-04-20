@@ -39,7 +39,7 @@ class WSFrame:
 
 
 
-    def parse_header(self):
+    def parse_headers(self):
 
         self.opcode = self.frame_bytes[0] & 31
         self.fin = self.frame_bytes[0] >> 7
@@ -75,8 +75,62 @@ class WSFrame:
 
 
     def check_payload(self):
-        return 
+        return
 
-    
-# def test_parsing_frame():
-#     print()
+
+    def extract_payload(self):
+        offset = self.first_mask_or_payload_byte
+        if self.maskbit == 1:
+            offset = offset + 4
+        raw_payload = self.frame_bytes[offset:]
+
+        if len(raw_payload) < self.payload_length:
+            return
+        else:
+            self.finished_buffering = True
+
+        if self.maskbit == 1:
+            mask = self.frame_bytes[self.first_mask_or_payload_byte:self.first_mask_or_payload_byte+4]
+            payload = b''
+            for i in range(self.first_mask_or_payload_byte+4,self.first_mask_or_payload_byte+4+self.payload_length):
+                mask_byte_index = (i - self.first_mask_or_payload_byte) & 4
+                payload = payload + (self.frame_bytes[i] ^ mask[mask_byte_index]).to_bytes(1, "little")
+            self.payload = payload
+        else:
+            self.payload = self.frame_bytes[self.first_mask_or_payload_byte:self.first_mask_or_payload_byte+self.payload_length]
+
+
+    def print_frame(self):
+
+        for i in range(0, len(self.frame_bytes)):
+            the_byte = self.frame_bytes[i]
+            print(byte_to_binary_string(the_byte), end = " ")
+            if i % 4 == 3:
+                print()
+            print("payload length: " + str(self.payload_length))
+            print("payload: " + self.payload.decode())
+
+
+
+def byte_to_binary_string(the_byte):
+
+    as_binary = str(bin(the_byte))[2:]
+    for i in range(len(as_binary), 8):
+        as_binary = '0' + as_binary
+    return as_binary
+
+
+def test_frame_parsing():
+
+    frame_bytes = b"fgjh"
+    expected_message = '{}'
+    frame = WSFrame(frame_bytes)
+    frame.extract_payload()
+    assert frame.payload_length == len(expected_message), str(frame.payload_length) + " did not equal " + str((len(expected_message)))
+    assert frame.payload.decode() == expected_message, frame.payload.decode() + " did not equal " + expected_message
+
+
+
+if __name__ == '__main__':
+
+    test_frame_parsing()

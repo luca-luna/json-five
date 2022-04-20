@@ -8,6 +8,11 @@ def render_template(html_file, data):
         else:
             template = render_loop_2(template, {})
 
+        # if "loop_data3" in data.keys():
+        #     template = render_loop_3(template, {"loop_data3": data["loop_data3"]})
+        # else:
+        #     template = render_loop_3(template, {})
+
         return template
 
 def replace_placeholders(template, data):

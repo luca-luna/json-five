@@ -92,8 +92,11 @@ class WSFrame:
         if self.maskbit == 1:
             mask = self.frame_bytes[self.first_mask_or_payload_byte:self.first_mask_or_payload_byte+4]
             payload = b''
-            for i in range(self.first_mask_or_payload_byte+4,self.first_mask_or_payload_byte+4+self.payload_length):
-                mask_byte_index = (i - self.first_mask_or_payload_byte) & 4
+            print("check", self.first_mask_or_payload_byte+4, self.first_mask_or_payload_byte+4+self.payload_length, len(self.frame_bytes))
+            for i in range(self.first_mask_or_payload_byte+4, self.first_mask_or_payload_byte+4+self.payload_length):
+                print(i)
+                mask_byte_index = (i - self.first_mask_or_payload_byte) % 4
+                print(mask_byte_index)
                 payload = payload + (self.frame_bytes[i] ^ mask[mask_byte_index]).to_bytes(1, "little")
             self.payload = payload
         else:
@@ -122,13 +125,14 @@ def byte_to_binary_string(the_byte):
 
 def test_frame_parsing():
 
-    frame_bytes = b"fgjh"
-    expected_message = '{}'
+    frame_bytes = b"\x81\xbdx)\x82m\x03\x0b\xef\x08\x0bZ\xe3\n\x1d}\xfb\x1d\x1d\x0b\xb8O\x1bA\xe3\x195L\xf1\x1e\x19N\xe7OT\x0b\xe1\x02\x15D\xe7\x03\x0c\x0b\xb8O\x10L\xee\x01\x17\x05\xa2\x05\x17^\xa2\x0c\nL\xa2\x14\x17\\\xbdO\x05"
+    expected_message = '{"messageType":"chatMessage","comment":"hello, how are you?"}'
     frame = WSFrame(frame_bytes)
+    frame.print_frame()
     frame.extract_payload()
+    frame.print_frame()
     assert frame.payload_length == len(expected_message), str(frame.payload_length) + " did not equal " + str((len(expected_message)))
     assert frame.payload.decode() == expected_message, frame.payload.decode() + " did not equal " + expected_message
-
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 import parse
-from database import message_collection, listHomepageMessages
+from database import message_collection, listHomepageMessages, listImages
 from database import username_posted_collection
 from template import render_template
 
@@ -31,6 +31,7 @@ def file(filename):
     elif file_type == "html":
         print(listHomepageMessages(), flush=True)
         content = render_template(filename, {"loop_data2": listHomepageMessages()}).encode()
+        content += render_template(filename, {"loop_data3": listImages()}).encode()
         print(content, flush=True)
         content_type = "text/html; charset=utf-8"
 

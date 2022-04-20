@@ -14,6 +14,8 @@ message_id_collection = db['next_id_messages']
 dm_collection = db['dms']
 dm_id_collection = db['next_id_dms']
 
+image_collection = db["images"]
+
 
 '''
 message_collection is for the homepage messaging area
@@ -86,6 +88,12 @@ def listDMs(username1, username2):
 
     return docs
 
+def listImages():
+
+    docs = []
+    for doc in image_collection.find({}):
+        del doc["_id"]
+        docs.append(doc)
 
 
 

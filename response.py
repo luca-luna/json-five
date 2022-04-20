@@ -30,8 +30,7 @@ def file(filename):
 
     elif file_type == "html":
         print(listHomepageMessages(), flush=True)
-        content = render_template(filename, {"loop_data2": listHomepageMessages()}).encode()
-        content += render_template(filename, {"loop_data3": listImages()}).encode()
+        content = render_template(filename, {"loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
         print(content, flush=True)
         content_type = "text/html; charset=utf-8"
 

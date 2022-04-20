@@ -114,7 +114,6 @@ class WSFrame:
             print("payload: " + self.payload.decode())
 
 
-
 def byte_to_binary_string(the_byte):
 
     as_binary = str(bin(the_byte))[2:]
@@ -134,6 +133,18 @@ def test_frame_parsing():
     assert frame.payload_length == len(expected_message), str(frame.payload_length) + " did not equal " + str((len(expected_message)))
     assert frame.payload.decode() == expected_message, frame.payload.decode() + " did not equal " + expected_message
 
+def generate_frame(payload_bytes):
+    payload_length = len(payload_bytes)
+    frame = b'\x81'
+    if payload_length < 126:
+        frame = frame + payload_length.to_bytes(1, 'big')
+    elif payload_length < 65536:
+        frame = frame + b'\x7e' + payload_length.to_bytes(2, 'big')
+    else:
+        frame = frame + b'\x7f' + payload_length.to_bytes(8, 'big')
+
+    frame = frame + payload_bytes
+    return frame
 
 if __name__ == '__main__':
 

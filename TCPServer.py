@@ -4,7 +4,7 @@ import response
 import database
 from parsing_request import Request
 from our_router import Router
-from paths import add_paths
+import paths as path
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -22,7 +22,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
      #CONSTRUCTOR
     def __init__(self, request, client_addr, server):
        self.router = Router()
-       add_paths(self.router)
+       path.add_paths(self.router)
        super().__init__(request, client_addr, server)
     
     def handle(self):

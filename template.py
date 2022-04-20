@@ -78,3 +78,33 @@ def render_loop_2(template, data):
         final_content = template[:start_index] + template[end_index + len(loop_end_tag):]
 
         return final_content
+
+def render_loop_3(template, data):
+    if "loop_data3" in data:
+        loop_start_tag = "{{loop3}}"
+        loop_end_tag = "{{end_loop3}}"
+
+        start_index = template.find(loop_start_tag)
+        end_index = template.find(loop_end_tag)
+
+        loop_template = template[start_index + len(loop_start_tag): end_index]
+        loop_data = data["loop_data3"]
+
+        loop_content = ""
+        for single_piece_of_content in loop_data:
+            loop_content += replace_placeholders(loop_template, single_piece_of_content)
+
+        final_content = template[:start_index] + loop_content + template[end_index + len(loop_end_tag):]
+
+        return final_content
+    else:
+        loop_start_tag = "{{loop3}}"
+        loop_end_tag = "{{end_loop3}}"
+
+        start_index = template.find(loop_start_tag)
+        end_index = template.find(loop_end_tag)
+
+        final_content = template[:start_index] + template[end_index + len(loop_end_tag):]
+
+        return final_content
+

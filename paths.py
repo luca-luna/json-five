@@ -97,9 +97,7 @@ def websocket_request(request, handler):
 
         while not ws_frame.finished_buffering:
             ws_frame_raw += handler.request.recv(1024)
-            ## add buffering code here, call check_payload()
-
-
+            ws_frame.check_payload()
         ws_frame.extract_payload()
         message_json = ws_frame.payload.decode()
         message = json.loads(message_json)

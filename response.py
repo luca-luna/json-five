@@ -29,9 +29,9 @@ def file(filename):
         content_type = "image/jpeg"
 
     elif file_type == "html":
-        print(listHomepageMessages(), flush=True)
+        # print(listHomepageMessages(), flush=True)
         content = render_template(filename, {"loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
-        print(content, flush=True)
+        # print(content, flush=True)
         content_type = "text/html; charset=utf-8"
 
         # messages = list(message_collection.find({}, {'_id': False}))
@@ -52,7 +52,7 @@ def file(filename):
     else:
         content_type = "text/" + file_type + "; charset=utf-8"
 
-    print("content type", content_type, flush=True)
+    # print("content type", content_type, flush=True)
 
     response = ok(content_type, content)
     # print(respost, flush=True)
@@ -67,15 +67,15 @@ def forbidden():
 def ok(content_type, message):
 
     header = ("HTTP/1.1 200 OK\r\nContent-Length: " + str(len(message)) + "\r\nContent-Type: " + content_type + "\r\nX-Content-Type-Options: nosniff\r\n\r\n").encode()
-    print("header", header, flush=True)
+    # print("header", header, flush=True)
     response = header + message
-    print("response", response, flush=True)
+    # print("response", response, flush=True)
     return response
 
 def websocket_handshake(accept):
 
     #Sean ATTN, kept it like this for now
-    response = ("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: " + accept + "\r\n\r\n").encode()
+    response = (b"HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: " + accept + b"\r\n\r\n")
     return response
 
 

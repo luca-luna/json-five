@@ -18,6 +18,7 @@ def add_paths(router):
     router.add_route(Route('GET', "/images/", images))
     router.add_route(Route('GET', '/websocket', websocket_request))
     router.add_route(Route('GET', '/chat-history', chat_history))
+    router.add_route(Route('GET', "/connect_websocket.js", wsfunction))
     
     #ALWAYS Keeping this at last, if you wish to add more Routes, add it above this line
     router.add_route(Route('GET', "/", homepage))
@@ -37,18 +38,22 @@ def homepage(request, handler):
 
 def send_chat(request, handler):
     bytes_boundary = request.headers['Content-Type'].split('=')[1].strip().encode()
-    print(bytes_boundary, flush=True)
-    print(request.body, flush=True)
-    print(parse_form(request.body, bytes_boundary), flush=True)
+    # print(bytes_boundary, flush=True)
+    # print(request.body, flush=True)
+    # print(parse_form(request.body, bytes_boundary), flush=True)
     parsed_form = parse_form(request.body, bytes_boundary)
     message = escape_html(parsed_form['chat message']['input'].decode())
     username = escape_html(str(randint(0, 1000)))
-    database.addHomepageMessage({"message": message, "username": username})
-    print("inserted", flush=True)
+    database.addHomepageMessage({"message": message, "username": username, "upvotes": 0})
+    # print("inserted", flush=True)
     handler.request.sendall(redirect("/"))
 
 def jsfunction(request, handler):
     response = file("front_end/functions.js")
+    handler.request.sendall(response)
+
+def wsfunction(request, handler):
+    response = file("front_end/connect_websocket.js")
     handler.request.sendall(response)
     
 def style(request, handler):
@@ -58,8 +63,8 @@ def style(request, handler):
 def images(request, handler):
     path_prefix = "/images/"
     image_name = request.path[request.path.find(path_prefix) + len(path_prefix):]
-    print("Our image")
-    print(image_name)
+    # print("Our image")
+    # print(image_name)
     image_name = image_name.replace("/", "")
     response = file("front_end/images/" + image_name)
     handler.request.sendall(response)
@@ -74,8 +79,11 @@ def chat_history(request, handler):
 
 def websocket_request(request, handler):
     key = request.headers["Sec-WebSocket-Key"]
+    print("key", key, flush=True)
     accept = compute_accept(key)
+    print("accept", flush=True)
     response = websocket_handshake(accept)
+    print("websocket", response, flush=True)
     handler.request.sendall(response)
 
     username="User"+str(random.randint(0,1000))

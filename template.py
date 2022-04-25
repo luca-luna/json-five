@@ -16,11 +16,17 @@ def render_template(html_file, data):
         return template
 
 def replace_placeholders(template, data):
+    print(data, flush=True)
     replaced_template = template
 
     for holder in data.keys():
+        print(holder, flush=True)
         if isinstance(data[holder], str):
+            print("instance",flush=True)
             replaced_template = replaced_template.replace("{{" + holder + "}}", data[holder])
+        elif isinstance(data[holder], int):
+            print("instance", flush=True)
+            replaced_template = replaced_template.replace("{{" + holder + "}}", str(data[holder]))
 
     return replaced_template
 

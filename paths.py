@@ -9,6 +9,12 @@ from websocket import compute_accept
 import database, random, json
 import websocket
 
+from pymongo import MongoClient
+
+mongo_client = MongoClient("mongo")
+db = mongo_client['312-Project']
+user_collection = db['users']
+message_collection = db['messages']
 
 def add_paths(router):
     #Adding Routes to our router
@@ -110,8 +116,19 @@ def websocket_request(request, handler):
         message_json = ws_frame.payload.decode()
         message = json.loads(message_json)
         message_type = message['messageType']
+        response = websocket_handle(message)
+        if message_type == "upvoteMessage":
+            for connection in MyTCPHandler.websocket_connections:
+                connection['socket'].request.sendall(response)
 
-
+def websocket_handle(message):
+    print("handle", message, flush=True)
+    if message['messageType'] == 'upvoteMessage':
+        # Update database
+        upvotes = message_collection.find_one({'id': message['message_id']})['upvotes'] + 1
+        message_collection.update_one({'id': message['message_id']}, {'$set': {'upvotes': upvotes}})
+        # Make response with new count
+        return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
 
 
 def escape_html(input):

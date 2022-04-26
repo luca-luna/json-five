@@ -15,6 +15,7 @@ mongo_client = MongoClient("mongo")
 db = mongo_client['312-Project']
 user_collection = db['users']
 message_collection = db['messages']
+dm_collection = db['dms']
 
 def add_paths(router):
     #Adding Routes to our router
@@ -134,7 +135,7 @@ def websocket_handle(message):
         return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
     if message['messageType'] == 'directMessage':
         # Update database
-        message_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': message['message']}})
+        dm_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': message['message']}})
         # Make response with new count
         return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': message['message']}).encode())
 

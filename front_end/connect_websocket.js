@@ -6,7 +6,7 @@ function upvote(message_id) {
 
 //perhaps first step to setting up websocket DMs... but where is this set up
 function directMessage(message, username) {
-    socket.send(JSON.stringify({'messageType': 'directMessage', 'message': message, 'sender': username}));
+    socket.send(JSON.stringify({'messageType': 'directMessage', 'message': message, 'reciever': username}));
 }
 
 function showPrompt(username_online){
@@ -34,7 +34,7 @@ socket.onmessage = function (ws_message) {
             break
         case 'directMessage':
             //need to tell it what to do when it gets a direct message
-            broadcastDirectMessage(message)
+            broadcastDirectMessage(message.message)
             break
         default:
             console.log("received an invalid WS messageType");

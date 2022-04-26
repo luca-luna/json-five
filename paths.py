@@ -134,10 +134,9 @@ def websocket_handle(message):
         return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
     if message['messageType'] == 'directMessage':
         # Update database
-        #upvotes = message_collection.find_one({'id': message['message_id']})['upvotes'] + 1
-        #message_collection.update_one({'id': message['message_id']}, {'$set': {'upvotes': upvotes}})
+        message_collection.insert_one({'username': message['username']}, {'$set': {'message': message['message']}})
         # Make response with new count
-        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
+        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'username': message['username'], 'message': message['message']}).encode())
 
 def escape_html(input):
     return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")

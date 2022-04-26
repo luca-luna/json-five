@@ -4,10 +4,20 @@ function upvote(message_id) {
     socket.send(JSON.stringify({'messageType': 'upvoteMessage', 'message_id': message_id}));
 }
 
+//perhaps first step to setting up websocket DMs... but where is this set up
+function directMessage(message_id) {
+    socket.send(JSON.stringify({'messageType': 'directMessage', 'message_id': message_id}));
+}
+
 function addUpvote(message) {
     // console.log("adding upvote")
     let upvote = document.getElementById(message['id'].toString() + "_upvote");
     upvote.innerHTML = "Upvote [" + message['upvoteCount'] + "]";
+}
+
+function broadcastDirectMessage(message){
+    console.log("broadcasting direct message")
+    alert("You've received a DM!");
 }
 
 socket.onmessage = function (ws_message) {
@@ -17,6 +27,10 @@ socket.onmessage = function (ws_message) {
     switch (messageType) {
         case 'upvoteMessage':
             addUpvote(message);
+            break
+        case 'directMessage':
+            //need to tell it what to do when it gets a direct message
+            broadcastDirectMessage(message)
             break
         default:
             console.log("received an invalid WS messageType");

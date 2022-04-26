@@ -9,9 +9,9 @@ function directMessage(message, username) {
     socket.send(JSON.stringify({'messageType': 'directMessage', 'message': message, 'sender': username}));
 }
 
-function showPrompt(){
+function showPrompt(username_online){
     let capturedDirectMessage = prompt("Enter your Direct Message")
-    directMessage(capturedDirectMessage)
+    directMessage(capturedDirectMessage, username_online)
 }
 
 function addUpvote(message) {

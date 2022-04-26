@@ -137,7 +137,7 @@ def websocket_handle(message):
         #upvotes = message_collection.find_one({'id': message['message_id']})['upvotes'] + 1
         #message_collection.update_one({'id': message['message_id']}, {'$set': {'upvotes': upvotes}})
         # Make response with new count
-        return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
+        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
 
 def escape_html(input):
     return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")

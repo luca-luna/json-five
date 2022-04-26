@@ -5,13 +5,13 @@ function upvote(message_id) {
 }
 
 //perhaps first step to setting up websocket DMs... but where is this set up
-function directMessage(message, username) {
-    socket.send(JSON.stringify({'messageType': 'directMessage', 'message': message, 'reciever': username}));
+function directMessage(message) {
+    socket.send(JSON.stringify({'messageType': 'directMessage', 'message': message}));
 }
 
 function showPrompt(username_online){
     let capturedDirectMessage = prompt("Enter your Direct Message")
-    directMessage(capturedDirectMessage, username_online)
+    directMessage(capturedDirectMessage)
 }
 
 function addUpvote(message) {
@@ -33,6 +33,7 @@ socket.onmessage = function (ws_message) {
             addUpvote(message);
             break
         case 'directMessage':
+            //console.log("Check me")
             //need to tell it what to do when it gets a direct message
             broadcastDirectMessage(message.message)
             break

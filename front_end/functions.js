@@ -1,3 +1,3 @@
 function showDM() {
-    alert("You've received a DM!");
+    prompt("type here")
 }

@@ -120,6 +120,9 @@ def websocket_request(request, handler):
         if message_type == "upvoteMessage":
             for connection in MyTCPHandler.websocket_connections:
                 connection['socket'].request.sendall(response)
+        if message_type == "directMessage":
+            for connection in MyTCPHandler.websocket_connections:
+                connection['socket'].request.sendall(response)
 
 def websocket_handle(message):
     print("handle", message, flush=True)
@@ -129,7 +132,12 @@ def websocket_handle(message):
         message_collection.update_one({'id': message['message_id']}, {'$set': {'upvotes': upvotes}})
         # Make response with new count
         return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
-
+    if message['messageType'] == 'directMessage':
+        # Update database
+        #upvotes = message_collection.find_one({'id': message['message_id']})['upvotes'] + 1
+        #message_collection.update_one({'id': message['message_id']}, {'$set': {'upvotes': upvotes}})
+        # Make response with new count
+        return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
 
 def escape_html(input):
     return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")

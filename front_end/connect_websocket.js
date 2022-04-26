@@ -25,6 +25,7 @@ function broadcastDirectMessage(message){
 }
 
 socket.onmessage = function (ws_message) {
+    console.log("TEST")
     const message = JSON.parse(ws_message.data);
     const messageType = message.messageType
     // console.log(message)

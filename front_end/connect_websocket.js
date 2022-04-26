@@ -10,7 +10,8 @@ function directMessage() {
 }
 
 function showPrompt(){
-    prompt("YO!")
+    let capturedDirectMessage = prompt("Enter your Direct Message")
+    broadcastDirectMessage("You receieved a Direct Message!:\n" + capturedDirectMessage)
 }
 
 function addUpvote(message) {
@@ -20,8 +21,7 @@ function addUpvote(message) {
 }
 
 function broadcastDirectMessage(message){
-    console.log("broadcasting direct message")
-    alert("You've received a DM!");
+    alert(message);
 }
 
 socket.onmessage = function (ws_message) {

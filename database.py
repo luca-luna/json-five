@@ -15,6 +15,7 @@ dm_collection = db['dms']
 dm_id_collection = db['next_id_dms']
 
 image_collection = db["images"]
+image_id_collection = db['next_id_images']
 
 
 '''
@@ -35,8 +36,6 @@ def create_id(collection):
     else:
         collection.insert_one({'prev_id': 1})
         return 1
-
-
 
 def addHomepageMessage(info):
 
@@ -66,7 +65,13 @@ def addDM(info):
 
     return created_record
 
+def addImage(username):
+    image_id = create_image_id()
 
+    image_path = 'front_end/images/pic' + str(image_id) + '.jpg'
+    image_collection.insert_one({"username": username, "image": image_path})
+
+    return image_path
 
 def listHomepageMessages():
 
@@ -88,20 +93,24 @@ def listDMs(username1, username2):
 
     return docs
 
-def listImages():
 
+def listImages():
     docs = []
     for doc in image_collection.find({}):
         del doc["_id"]
         docs.append(doc)
 
+    return docs
 
-
-
-
-
-
-
+def create_image_id():
+    num = image_id_collection.find_one({})
+    if num:
+        next_num = int(num['prev_num']) + 1
+        image_id_collection.update_one({}, {'$set': {'prev_num': next_num}})
+        return next_num
+    else:
+        image_id_collection.insert_one({'prev_num': 0})
+        return 0
 
 
 

@@ -8,10 +8,11 @@ def render_template(html_file, data):
         else:
             template = render_loop_2(template, {})
 
-        # if "loop_data3" in data.keys():
-        #     template = render_loop_3(template, {"loop_data3": data["loop_data3"]})
-        # else:
-        #     template = render_loop_3(template, {})
+        # once I put stuff in image_collections uncomment the below stuff
+        if "loop_data3" in data.keys():
+            template = render_loop_3(template, {"loop_data3": data["loop_data3"]})
+        else:
+            template = render_loop_3(template, {})
 
         return template
 

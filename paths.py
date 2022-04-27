@@ -20,6 +20,7 @@ dm_collection = db['dms']
 def add_paths(router):
     #Adding Routes to our router
     router.add_route(Route('POST', "/send-chat", send_chat))
+    router.add_route(Route('POST', "/image-upload", image_upload))
     router.add_route(Route('GET', "/functions.js", jsfunction))
     router.add_route(Route('GET', "/style.css", style))
     router.add_route(Route('GET', "/images/", images))
@@ -41,7 +42,19 @@ def homepage(request, handler):
     
     handler.request.sendall(response)
         
-        
+def image_upload(request, handler):
+    # get image bytes
+    bytes_boundary = request.headers['Content-Type'].split('=')[1].strip().encode()
+    parsed_form = parse_form(request.body, bytes_boundary)
+    image_bytes = parsed_form['upload']['input']
+
+    # add image path to database
+    image_path = database.addImage("some_user")
+
+    # write bytes to a file at filepath
+    with open(image_path, 'wb') as f:
+        f.write(image_bytes)
+    handler.request.sendall(redirect("/"))
 
 def send_chat(request, handler):
     bytes_boundary = request.headers['Content-Type'].split('=')[1].strip().encode()

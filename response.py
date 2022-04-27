@@ -30,24 +30,11 @@ def file(filename):
 
     elif file_type == "html":
         # print(listHomepageMessages(), flush=True)
+        print("LISTIMAGES")
+        #print(listImages())
         content = render_template(filename, {"loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
         # print(content, flush=True)
         content_type = "text/html; charset=utf-8"
-
-        # messages = list(message_collection.find({}, {'_id': False}))
-        # usernames = list(username_posted_collection.find({}, {"_id": False}))
-        #
-        # replace = ""
-        # for i in range(len(messages)):
-        #     replace += "<p>"
-        #     replace += usernames[i]["username"] + ">> "
-        #     replace += messages[i]["message"]
-        #     replace += "</p>"
-        #
-        # content = content.replace(b"{{loop2}}", b"")
-        # content = content.replace(b"{{end_loop2}}", b"")
-        # content = content.replace(b"{{username}}: {{message}}", replace.encode())
-        # content_type = "text/" + file_type + "; charset=utf-8"
 
     else:
         content_type = "text/" + file_type + "; charset=utf-8"

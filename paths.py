@@ -50,10 +50,13 @@ def image_upload(request, handler):
 
     # add image path to database
     image_path = database.addImage("some_user")
+    print("IMAGE PATH")
+    print(image_path, flush=True)
 
     # write bytes to a file at filepath
-    with open(image_path, 'wb') as f:
+    with open('front_end/' + image_path, 'wb') as f:
         f.write(image_bytes)
+        print("FILE WRITTEN")
     handler.request.sendall(redirect("/"))
 
 def send_chat(request, handler):
@@ -87,6 +90,7 @@ def images(request, handler):
     # print(image_name)
     image_name = image_name.replace("/", "")
     response = file("front_end/images/" + image_name)
+    print("serving: " + "front_end/images/" + image_name)
     handler.request.sendall(response)
 
 def chat_history(request, handler):

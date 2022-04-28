@@ -4,10 +4,11 @@ from TCPServer import MyTCPHandler
 from our_router import Route
 from parsing_request import parse_form
 from template import render_template
-from response import file, redirect, notFound, websocket_handshake, generate_response
+from response import file, redirect, notFound, websocket_handshake, generate_response, forbidden
 from websocket import compute_accept
 import database, random, json
 import websocket
+from database import image_collection, image_id_collection
 
 from pymongo import MongoClient
 
@@ -54,7 +55,7 @@ def image_upload(request, handler):
     print(image_path, flush=True)
 
     # write bytes to a file at filepath
-    with open('front_end/' + image_path, 'wb') as f:
+    with open('front_end/' + str(image_path), 'wb') as f:
         f.write(image_bytes)
         print("FILE WRITTEN")
     handler.request.sendall(redirect("/"))
@@ -88,9 +89,12 @@ def images(request, handler):
     image_name = request.path[request.path.find(path_prefix) + len(path_prefix):]
     # print("Our image")
     # print(image_name)
-    image_name = image_name.replace("/", "")
-    response = file("front_end/images/" + image_name)
-    print("serving: " + "front_end/images/" + image_name)
+    if "/" in image_name:
+        response = forbidden()
+    else:
+        image_name = image_name.replace("/", "")
+        response = file("front_end/images/" + image_name)
+        print("serving: " + "front_end/images/" + image_name)
     handler.request.sendall(response)
 
 def chat_history(request, handler):
@@ -158,3 +162,6 @@ def websocket_handle(message):
 
 def escape_html(input):
     return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")
+
+
+

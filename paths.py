@@ -161,7 +161,7 @@ def websocket_handle(message):
         return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': message['message']}).encode())
 
 def escape_html(input):
-    return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")
+    return input.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
 
 
 

@@ -146,6 +146,7 @@ def websocket_request(request, handler):
             for connection in MyTCPHandler.websocket_connections:
                 connection['socket'].request.sendall(response)
 
+
 def websocket_handle(message):
     print("handle", message, flush=True)
     if message['messageType'] == 'upvoteMessage':
@@ -155,13 +156,13 @@ def websocket_handle(message):
         # Make response with new count
         return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
     if message['messageType'] == 'directMessage':
+        # escape html
+        dm = escape_html(message['message'])
         # Update database
-        dm_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': message['message']}})
+        dm_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': dm}})
         # Make response with new count
-        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': message['message']}).encode())
+        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': dm}).encode())
 
 def escape_html(input):
     return input.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
-
-
 

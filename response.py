@@ -26,7 +26,7 @@ def file(filename):
     file_type = parse.fileType(filename)
 
     if file_type == "jpg":
-        content_type = "image/jpeg"
+        content_type = "image/jpeg; charset=utf-8"
 
     elif file_type == "html":
         # print(listHomepageMessages(), flush=True)
@@ -39,7 +39,7 @@ def file(filename):
     else:
         content_type = "text/" + file_type + "; charset=utf-8"
 
-    # print("content type", content_type, flush=True)
+    print("content type", content_type, flush=True)
 
     response = ok(content_type, content)
     # print(respost, flush=True)

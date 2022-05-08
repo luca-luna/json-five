@@ -13,7 +13,7 @@ def generate_response(body: bytes, content_type: str = 'text/plain; charset=utf-
   
     return response
 
-def file(filename):
+def file(filename, username=""):
 
     file = open(filename, 'rb')
 
@@ -32,7 +32,13 @@ def file(filename):
         # print(listHomepageMessages(), flush=True)
         print("LISTIMAGES")
         #print(listImages())
-        content = render_template(filename, {"loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
+        if username != "":
+            content = render_template(filename, {"logged_in_user": "Welcome, " + username + "!", "loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
+        else:
+            content = render_template(filename, {"logged_in_user": "",
+                                                 "loop_data2": listHomepageMessages(),
+                                                 "loop_data3": listImages()}).encode()
+
         # print(content, flush=True)
         content_type = "text/html; charset=utf-8"
 
@@ -72,3 +78,17 @@ def redirect(new_location):
 
 def notFound():
      return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 36\r\n\r\nThe requested content does not exist".encode()
+
+
+def response_301(location, cookie=b''):
+    if cookie != b'':
+        return b"HTTP/1.1 301 Moved Permanently\r\n" \
+               b"Location: " + location.encode(encoding='utf-8', errors='strict') + \
+               b"\r\nX-Content-Type-Options: nosniff" + \
+               b"\r\n" + cookie + \
+               b"\r\nContent-Length: 0\r\n\r\n"
+    else:
+        return b"HTTP/1.1 301 Moved Permanently\r\n" \
+               b"Location: " + location.encode(encoding='utf-8', errors='strict') + \
+               b"\r\nX-Content-Type-Options: nosniff" + \
+               b"\r\nContent-Length: 0\r\n\r\n"

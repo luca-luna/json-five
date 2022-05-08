@@ -46,11 +46,37 @@
       </nav>
 
 
-<div class="mt-3 container">
-<h1>Big Blue Pulled Pork Mac & Cheese</h1>
+<div class="mt-3 container"></div>
+<h1>Little Blue Pulled Pork Mac & Cheese</h1>
 
-<button id="create-account">Create Account</button>
-<button id="login">Login</button>
+<h1>
+    {{logged_in_user}}
+</h1>
+
+<form action="/signup" id="signup-form" method="post" enctype="multipart/form-data">
+   <label for="signup-username">Username: </label>
+<!--   <textarea id="signup-username" name="signup-username" cols="20" rows="1"></textarea>-->
+    <input id="signup-username" type="text" name="signup-username">
+   <br/>
+    <label for="signup-password">Password: </label>
+<!--   <textarea id="signup-password" name="signup-password" cols="20" rows="1"></textarea>-->
+    <input id="signup-password" type="text" name="signup-password">
+    <br/>
+   <input type="submit" value="Signup">
+</form>
+
+<form action="/login" id="login-form" method="post" enctype="multipart/form-data">
+   <label for="login-username">Username: </label>
+<!--   <textarea id="login-username" name="login-username" cols="20" rows="1"></textarea>-->
+    <input id="login-username" type="text" name="login-username">
+   <br/>
+    <label for="login-password">Password: </label>
+<!--   <textarea id="login-password" name="login-password" cols="20" rows="1"></textarea>-->
+    <input id="login-password" type="text" name="login-password">
+    <br/>
+   <input type="submit" value="Login">
+</form>
+
 
 <img class="profile-pic" src="images/whale.jpg">
 
@@ -88,7 +114,7 @@
 </form>
 
 <form action="/image-upload" id="image-form" method="post" enctype="multipart/form-data">
-   <label>Upload Mac: </label>
+   <label>Upload Mac & Cheese 🤤: </label>
    <input id="form-file" type="file" name="upload">
 
    <input type="submit" value="Post">

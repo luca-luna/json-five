@@ -1,10 +1,16 @@
+import base64
+import hashlib
+import uuid
 from random import randint
+
+import bcrypt as bcrypt
+
 from TCPServer import MyTCPHandler
 
 from our_router import Route
-from parsing_request import parse_form
+from parsing_request import parse_form, split_request, parse_request_line, parse_headers
 from template import render_template
-from response import file, redirect, notFound, websocket_handshake, generate_response, forbidden
+from response import file, redirect, notFound, websocket_handshake, generate_response, forbidden, response_301
 from websocket import compute_accept
 import database, random, json
 import websocket
@@ -17,6 +23,7 @@ db = mongo_client['312-Project']
 user_collection = db['users']
 message_collection = db['messages']
 dm_collection = db['dms']
+account_collection = db["accounts"]
 
 def add_paths(router):
     #Adding Routes to our router
@@ -28,6 +35,8 @@ def add_paths(router):
     router.add_route(Route('GET', '/websocket', websocket_request))
     router.add_route(Route('GET', '/chat-history', chat_history))
     router.add_route(Route('GET', "/connect_websocket.js", wsfunction))
+    router.add_route(Route('POST', "/signup", signup))
+    router.add_route(Route('POST', "/login", login))
     
     #ALWAYS Keeping this at last, if you wish to add more Routes, add it above this line
     router.add_route(Route('GET', "/", homepage))
@@ -37,11 +46,33 @@ def homepage(request, handler):
     listToStr = ''.join([str(elem) for elem in request.path])
     
     if(listToStr == "/"):
-        response = file("front_end/index.html")
+        response = file("front_end/index.html", get_username(request))
     else:
         response = notFound()
     
     handler.request.sendall(response)
+
+def get_username(request):
+    headers = request.headers
+    if 'Cookie' not in headers.keys():
+        return ""
+    cookies = headers['Cookie'].split(';')
+    auth_cookie = ""
+    for cookie in cookies:
+        parsed_cookie = cookie.split('=')
+        if parsed_cookie[0].strip() == "id":
+            auth_cookie = parsed_cookie[1].strip()
+            print("id:", auth_cookie, flush=True)
+            break
+    if auth_cookie != "" and auth_cookie != "-1":
+        account_data = account_collection.find()
+        hashed_cookie = hashlib.sha256(auth_cookie.encode()).digest()
+        for entry in account_data:
+            print(entry["cookie"], auth_cookie)
+            if entry["cookie"] == hashed_cookie:
+                print("account found", flush=True)
+                return entry["username"].decode()
+    return ""
         
 def image_upload(request, handler):
     # get image bytes
@@ -146,7 +177,6 @@ def websocket_request(request, handler):
             for connection in MyTCPHandler.websocket_connections:
                 connection['socket'].request.sendall(response)
 
-
 def websocket_handle(message):
     print("handle", message, flush=True)
     if message['messageType'] == 'upvoteMessage':
@@ -156,13 +186,77 @@ def websocket_handle(message):
         # Make response with new count
         return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
     if message['messageType'] == 'directMessage':
-        # escape html
-        dm = escape_html(message['message'])
         # Update database
-        dm_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': dm}})
+        dm_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': message['message']}})
         # Make response with new count
-        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': dm}).encode())
+        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': message['message']}).encode())
 
 def escape_html(input):
-    return input.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
+    return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")
 
+def signup(request, handler):
+    # Get parser info
+    body = request.body
+    headers = request.headers
+
+    # Find boundary
+    boundary = headers["Content-Type"].split('=')[1].strip()
+
+    form_data = parse_form(body.strip(), boundary.encode())
+    print(form_data, flush=True)
+
+    username = form_data['signup-username']['input']
+    username = escape_html(username.decode()).encode()
+    password = form_data['signup-password']['input']
+    salt = bcrypt.gensalt()
+    password = bcrypt.hashpw(base64.b64encode(hashlib.sha256(password).digest()), salt)
+
+    # Check if username already exists
+    account_data = account_collection.find()
+    for entry in account_data:
+        if entry["username"] == username:
+            print("duplicate username", flush=True)
+            handler.request.sendall(response_301("/"))
+
+    print(username, password)
+    account_collection.insert_one(
+        {"username": username, "password": password, "cookie": "-1", "salt": salt, "xsrf_token": "-1"})
+    print("account created")
+    handler.request.sendall(response_301("/"))
+
+def login(request, handler):
+    # Get parser info
+    body = request.body
+    headers = request.headers
+
+    # Find boundary
+    boundary = headers["Content-Type"].split('=')[1].strip()
+
+    form_data = parse_form(body.strip(), boundary.encode())
+
+    username = form_data['login-username']['input']
+    username = escape_html(username.decode()).encode()
+    password = form_data['login-password']['input']
+
+    print(username, password)
+
+    account_data = account_collection.find()
+    for entry in account_data:
+        # print(entry, flush=True)
+        salt = entry["salt"]
+        # print(salt, flush=True)
+        encrypted_password = bcrypt.hashpw(base64.b64encode(hashlib.sha256(password).digest()), salt)
+        # print("encrypted")
+        # print(encrypted_password, entry["password"])
+        if entry["username"] == username and entry["password"] == encrypted_password:
+            # print("account found")
+            cookie = str(uuid.uuid4()).encode()
+            hashed_cookie = hashlib.sha256(cookie).digest()
+            # print(cookie, type(cookie), flush=True)
+            account_collection.update_one({"username": username}, {'$set': {'cookie': hashed_cookie}})
+            cookie = b'Set-Cookie: id=' + cookie + b'; Max-Age=3600; HttpOnly'
+            # print(cookie, flush=True)
+            # print(redirect("/", cookie), flush=True)
+            handler.request.sendall(response_301("/", cookie))
+
+    handler.request.sendall(response_301("/"))

@@ -83,15 +83,24 @@ def image_upload(request, handler):
     image_bytes = parsed_form['upload']['input']
 
     # add image path to database
-    image_path = database.addImage("some_user")
-    print("IMAGE PATH")
-    print(image_path, flush=True)
+    username = get_username(request)
+    print("username", username, flush=True)
+    xsrf_token = parsed_form['xsrf_token']['input'].decode()
+    print("xsrf token", xsrf_token, flush=True)
 
-    # write bytes to a file at filepath
-    with open('front_end/' + str(image_path), 'wb') as f:
-        f.write(image_bytes)
-        print("FILE WRITTEN")
+    if username != "" and parse.verifyXSRFToken(xsrf_token, account_collection):
+        print("adding message to DB", flush=True)
+        image_path = database.addImage(username)
+        print("IMAGE PATH")
+        print(image_path, flush=True)
+
+        # write bytes to a file at filepath
+        with open('front_end/' + str(image_path), 'wb') as f:
+            f.write(image_bytes)
+            print("FILE WRITTEN")
+
     handler.request.sendall(redirect("/"))
+
 
 def send_chat(request, handler):
     bytes_boundary = request.headers['Content-Type'].split('=')[1].strip().encode()
@@ -173,7 +182,7 @@ def websocket_request(request, handler):
                 username = username["username"]
 
     print(username, flush=True)
-    MyTCPHandler.websocket_connections.append({'username':username.decode(), 'socket':handler})
+    MyTCPHandler.websocket_connections.append({'username':username, 'socket':handler})
     print(MyTCPHandler.websocket_connections, flush=True)
 
     while True:

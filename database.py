@@ -68,11 +68,11 @@ def addDM(info):
 
 def addImage(username):
     image_id = create_image_id()
-
     image_path = 'images/pic' + str(image_id) + '.jpg'
     image_collection.insert_one({"username": username, "image": image_path})
 
     return image_path
+
 
 def listHomepageMessages():
 

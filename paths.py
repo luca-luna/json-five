@@ -156,8 +156,26 @@ def websocket_request(request, handler):
     print("websocket", response, flush=True)
     handler.request.sendall(response)
 
-    username="User"+str(random.randint(0,1000))
-    MyTCPHandler.websocket_connections.append({'username':username, 'socket':handler})
+    username = ""
+    if 'Cookie' in request.headers.keys():
+        cookies = request.headers['Cookie'].split(';')
+        print("Cookies:", cookies, flush=True)
+        for cookie in cookies:
+            parsed_cookie = cookie.split('=')
+            print(parsed_cookie, flush=True)
+            if parsed_cookie[0].strip() == "id":
+                auth_cookie = parsed_cookie[1].strip()
+                print(auth_cookie, flush=True)
+                hashed_cookie = hashlib.sha256(auth_cookie.encode()).digest()
+                print(hashed_cookie, flush=True)
+                username = account_collection.find_one({'cookie': hashed_cookie})
+                print(username, flush=True)
+                username = username["username"]
+
+    print(username, flush=True)
+    MyTCPHandler.websocket_connections.append({'username':username.decode(), 'socket':handler})
+    print(MyTCPHandler.websocket_connections, flush=True)
+
     while True:
         ws_frame_raw = handler.request.recv(1024)
         ws_frame = websocket.WSFrame(ws_frame_raw)

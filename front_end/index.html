@@ -70,6 +70,7 @@
 <!--   <textarea id="login-username" name="login-username" cols="20" rows="1"></textarea>-->
     <input id="login-username" type="text" name="login-username">
    <br/>
+
     <label for="login-password">Password: </label>
 <!--   <textarea id="login-password" name="login-password" cols="20" rows="1"></textarea>-->
     <input id="login-password" type="text" name="login-password">
@@ -107,6 +108,7 @@
 </p>
 
 <form action="/send-chat" method="post" enctype="multipart/form-data">
+    <input value="{{token}}" name="xsrf_token" hidden>
     <label for="chat-message"> Enter a message:</label>
     <input id="chat-message" type="text" name="chat message">
 
@@ -114,8 +116,9 @@
 </form>
 
 <form action="/image-upload" id="image-form" method="post" enctype="multipart/form-data">
-   <label>Upload Mac & Cheese 🤤: </label>
-   <input id="form-file" type="file" name="upload">
+    <input value="{{token}}" name="xsrf_token" hidden>
+    <label>Upload Mac & Cheese 🤤: </label>
+    <input id="form-file" type="file" name="upload">
 
    <input type="submit" value="Post">
 </form>

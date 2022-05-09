@@ -14,6 +14,7 @@ from response import file, redirect, notFound, websocket_handshake, generate_res
 from websocket import compute_accept
 import database, random, json
 import websocket
+import parse
 from database import image_collection, image_id_collection
 
 from pymongo import MongoClient
@@ -52,6 +53,7 @@ def homepage(request, handler):
     
     handler.request.sendall(response)
 
+
 def get_username(request):
     headers = request.headers
     if 'Cookie' not in headers.keys():
@@ -81,25 +83,43 @@ def image_upload(request, handler):
     image_bytes = parsed_form['upload']['input']
 
     # add image path to database
-    image_path = database.addImage("some_user")
-    print("IMAGE PATH")
-    print(image_path, flush=True)
+    username = get_username(request)
+    print("username", username, flush=True)
+    xsrf_token = parsed_form['xsrf_token']['input'].decode()
+    print("xsrf token", xsrf_token, flush=True)
 
-    # write bytes to a file at filepath
-    with open('front_end/' + str(image_path), 'wb') as f:
-        f.write(image_bytes)
-        print("FILE WRITTEN")
+    if username != "" and parse.verifyXSRFToken(xsrf_token, account_collection):
+        print("adding message to DB", flush=True)
+        image_path = database.addImage(username)
+        print("IMAGE PATH")
+        print(image_path, flush=True)
+
+        # write bytes to a file at filepath
+        with open('front_end/' + str(image_path), 'wb') as f:
+            f.write(image_bytes)
+            print("FILE WRITTEN")
+
     handler.request.sendall(redirect("/"))
+
 
 def send_chat(request, handler):
     bytes_boundary = request.headers['Content-Type'].split('=')[1].strip().encode()
     # print(bytes_boundary, flush=True)
     # print(request.body, flush=True)
     # print(parse_form(request.body, bytes_boundary), flush=True)
+    print("about to parse form", flush=True)
     parsed_form = parse_form(request.body, bytes_boundary)
+    print("parsed form", parsed_form, flush=True)
     message = escape_html(parsed_form['chat message']['input'].decode())
-    username = escape_html(str(randint(0, 1000)))
-    database.addHomepageMessage({"message": message, "username": username, "upvotes": 0})
+    print("about to get username", flush=True)
+    username = get_username(request)
+    print("username", username, flush=True)
+    xsrf_token = parsed_form['xsrf_token']['input'].decode()
+    print("xsrf token", xsrf_token, flush=True)
+
+    if username != "" and parse.verifyXSRFToken(xsrf_token, account_collection):
+        print("adding message to DB", flush=True)
+        database.addHomepageMessage({"message": message, "username": username, "upvotes": 0})
     # print("inserted", flush=True)
     handler.request.sendall(redirect("/"))
 
@@ -162,7 +182,7 @@ def websocket_request(request, handler):
                 username = username["username"]
 
     print(username, flush=True)
-    MyTCPHandler.websocket_connections.append({'username':username.decode(), 'socket':handler})
+    MyTCPHandler.websocket_connections.append({'username':username, 'socket':handler})
     print(MyTCPHandler.websocket_connections, flush=True)
 
     while True:

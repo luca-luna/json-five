@@ -60,6 +60,7 @@ def parse_form(bytes_request, bytes_boundary):
         header_dict = {}
 
         for header in headers:
+            print("header: ", header, flush=True)
             if len(header) != 0:
                 header_name_split = header.split(':')
                 header_name = header_name_split[0]

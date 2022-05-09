@@ -65,6 +65,7 @@ def addDM(info):
 
     return created_record
 
+
 def addImage(username):
     image_id = create_image_id()
 

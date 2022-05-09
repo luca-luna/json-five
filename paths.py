@@ -14,6 +14,7 @@ from response import file, redirect, notFound, websocket_handshake, generate_res
 from websocket import compute_accept
 import database, random, json
 import websocket
+import parse
 from database import image_collection, image_id_collection
 
 from pymongo import MongoClient
@@ -51,6 +52,7 @@ def homepage(request, handler):
         response = notFound()
     
     handler.request.sendall(response)
+
 
 def get_username(request):
     headers = request.headers
@@ -96,10 +98,19 @@ def send_chat(request, handler):
     # print(bytes_boundary, flush=True)
     # print(request.body, flush=True)
     # print(parse_form(request.body, bytes_boundary), flush=True)
+    print("about to parse form", flush=True)
     parsed_form = parse_form(request.body, bytes_boundary)
+    print("parsed form", parsed_form, flush=True)
     message = escape_html(parsed_form['chat message']['input'].decode())
-    username = escape_html(str(randint(0, 1000)))
-    database.addHomepageMessage({"message": message, "username": username, "upvotes": 0})
+    print("about to get username", flush=True)
+    username = get_username(request)
+    print("username", username, flush=True)
+    xsrf_token = parsed_form['xsrf_token']['input'].decode()
+    print("xsrf token", xsrf_token, flush=True)
+
+    if username != "" and parse.verifyXSRFToken(xsrf_token, account_collection):
+        print("adding message to DB", flush=True)
+        database.addHomepageMessage({"message": message, "username": username, "upvotes": 0})
     # print("inserted", flush=True)
     handler.request.sendall(redirect("/"))
 

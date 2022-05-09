@@ -33,7 +33,7 @@ def file(filename, username=""):
         print("LISTIMAGES")
         #print(listImages())
         if username != "":
-            content = render_template(filename, {"logged_in_user": "Welcome, " + username + "!", "loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
+            content = render_template(filename, {"logged_in_user": "Welcome, " + username + "!", "loop_data1": get_online_users(username),"loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
         else:
             content = render_template(filename, {"logged_in_user": "",
                                                  "loop_data2": listHomepageMessages(),
@@ -79,6 +79,16 @@ def redirect(new_location):
 def notFound():
      return "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 36\r\n\r\nThe requested content does not exist".encode()
 
+
+def get_online_users(my_username):
+    users = []
+    from TCPServer import MyTCPHandler
+    from paths import get_username
+    print("ONLINE:", MyTCPHandler.websocket_connections, flush=True)
+    for socket in MyTCPHandler.websocket_connections:
+        if socket["username"] != my_username:
+            users.append({"username_online": socket["username"]})
+    return users
 
 def response_301(location, cookie=b''):
     if cookie != b'':

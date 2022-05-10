@@ -37,14 +37,16 @@ def replace_placeholders(template, data):
     return replaced_template
 
 def render_loop(template, data):
+    
+    loop_start_tag = "{{loop1}}"
+    loop_end_tag = "{{end_loop1}}"
+
+    start_index = template.find(loop_start_tag)
+    end_index = template.find(loop_end_tag)
+
+    loop_template = template[start_index + len(loop_start_tag): end_index]
+        
     if "loop_data" in data:
-        loop_start_tag = "{{loop}}"
-        loop_end_tag = "{{end_loop}}"
-
-        start_index = template.find(loop_start_tag)
-        end_index = template.find(loop_end_tag)
-
-        loop_template = template[start_index + len(loop_start_tag): end_index]
         loop_data = data["loop_data"]
 
         loop_content = ""
@@ -55,11 +57,6 @@ def render_loop(template, data):
 
         return final_content
     else:
-        loop_start_tag = "{{loop}}"
-        loop_end_tag = "{{end_loop}}"
-
-        start_index = template.find(loop_start_tag)
-        end_index = template.find(loop_end_tag)
 
         final_content = template[:start_index] + template[end_index + len(loop_end_tag):]
 

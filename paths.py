@@ -214,7 +214,7 @@ def websocket_request(request, handler):
         if message_type == "directMessage":
             recipient = message['recipient']
             for connection in MyTCPHandler.websocket_connections:
-                if(connection['socket']['username'] == recipient):
+                if(connection['username'].decode() == recipient):
                     connection['socket'].request.sendall(response)
 
 def websocket_handle(message):
@@ -227,7 +227,8 @@ def websocket_handle(message):
         return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
     if message['messageType'] == 'directMessage':
         # Update database
-        dm_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': message['message'], 'recipient': message['recipient']}})
+        print(message.keys(), flush=True)
+        dm_collection.insert_one({'messageType': 'directMessage', 'recipient': message['recipient']}, {'$set': {'message': message['message']}})
         # Make response with new count
         return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': message['message'], 'recipient': message['recipient']}).encode())
 

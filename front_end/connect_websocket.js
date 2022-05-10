@@ -6,12 +6,14 @@ function upvote(message_id) {
 
 //perhaps first step to setting up websocket DMs... but where is this set up
 function directMessage(message, username_online) {
-    socket.send(JSON.stringify({'messageType': 'directMessage', 'message': message, 'recipient': username_online}));
+    socket.send(JSON.stringify({'messageType': 'directMessage', 'message': message, 'recipient': username_online}))
+    console.log(username_online)
 }
 
 function showPrompt(username_online){
     let capturedDirectMessage = prompt("Enter your Direct Message")
-    directMessage(capturedDirectMessage)
+    directMessage(capturedDirectMessage, username_online)
+    console.log(username_online)
 }
 
 function addUpvote(message) {

@@ -38,7 +38,8 @@ socket.onmessage = function (ws_message) {
         case 'directMessage':
             //console.log("Check me")
             //need to tell it what to do when it gets a direct message
-            broadcastDirectMessage(message.message)
+            alertText = message.message + "\n" + "Sent by: " + message.sender
+            broadcastDirectMessage(alertText)
             break
         default:
             console.log("received an invalid WS messageType");

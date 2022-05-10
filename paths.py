@@ -212,8 +212,10 @@ def websocket_request(request, handler):
             for connection in MyTCPHandler.websocket_connections:
                 connection['socket'].request.sendall(response)
         if message_type == "directMessage":
+            recipient = message['recipient']
             for connection in MyTCPHandler.websocket_connections:
-                connection['socket'].request.sendall(response)
+                if(connection['socket']['username'] == recipient):
+                    connection['socket'].request.sendall(response)
 
 def websocket_handle(message):
     print("handle", message, flush=True)
@@ -225,9 +227,9 @@ def websocket_handle(message):
         return websocket.generate_frame(json.dumps({'messageType': 'upvoteMessage', 'id': str(message['message_id']), 'upvoteCount': str(upvotes)}).encode())
     if message['messageType'] == 'directMessage':
         # Update database
-        dm_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': message['message']}})
+        dm_collection.insert_one({'messageType': 'directMessage'}, {'$set': {'message': message['message'], 'recipient': message['recipient']}})
         # Make response with new count
-        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': message['message']}).encode())
+        return websocket.generate_frame(json.dumps({'messageType': 'directMessage', 'message': message['message'], 'recipient': message['recipient']}).encode())
 
 def escape_html(input):
     return input.replace('&', "&amp").replace('<', "&lt;").replace('>', "&gt;")

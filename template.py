@@ -36,7 +36,7 @@ def replace_placeholders(template, data):
 
     return replaced_template
 
-def render_loop(template, data):
+def render_loop_1(template, data):
     
     loop_start_tag = "{{loop1}}"
     loop_end_tag = "{{end_loop1}}"

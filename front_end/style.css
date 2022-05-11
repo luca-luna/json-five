@@ -143,3 +143,14 @@ input:hover{
     display: inline-block;
 }
 
+@keyframes recent {
+    from {
+      background-color: rgb(255, 218, 214);
+
+    }
+  
+    to {
+      background-color: salmon;
+    }
+    
+  }

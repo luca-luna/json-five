@@ -43,6 +43,9 @@ socket.onmessage = function (ws_message) {
             document.getElementById(message.sender + "_message").innerHTML = "Reply";
             document.getElementById(message.sender + "_message").style.backgroundColor = "salmon";
             document.getElementById(message.sender + "_message").style.color = "white";
+            document.getElementById(message.sender + "_message").style.cssText = "animation-duration: .75s; animation-name: recent;"
+            document.getElementById(message.sender + "_message").style.backgroundColor = "salmon";
+            document.getElementById(message.sender + "_message").style.color = "white";
             break
         default:
             console.log("received an invalid WS messageType");

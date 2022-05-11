@@ -28,6 +28,7 @@ def verifyXSRFToken(xsrf_token, account_collection):
     else:
         return False
 
+
 def generateXSRFToken():
 
     token = secrets.token_urlsafe(32)

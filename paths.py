@@ -167,7 +167,7 @@ def websocket_request(request, handler):
     print("websocket", response, flush=True)
     handler.request.sendall(response)
 
-    username = ""
+    username = b""
     if 'Cookie' in request.headers.keys():
         cookies = request.headers['Cookie'].split(';')
         print("Cookies:", cookies, flush=True)

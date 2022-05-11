@@ -125,6 +125,16 @@ input:hover{
     width: 120px;
 }
 
+.images {
+    width: 500px;
+}
+.image-upload {
+    max-width: 80%;
+    min-width: 80%;
+    height: Auto;
+    border: 10px solid rgb(78, 225, 255)
+}
+
 #online_h2{
     display: inline-block;
 }

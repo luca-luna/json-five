@@ -40,6 +40,9 @@ socket.onmessage = function (ws_message) {
             //need to tell it what to do when it gets a direct message
             alertText = message.message + "\n" + "Sent by: " + message.sender
             broadcastDirectMessage(alertText)
+            document.getElementById(message.sender + "_message").innerHTML = "Reply";
+            document.getElementById(message.sender + "_message").style.backgroundColor = "salmon";
+            document.getElementById(message.sender + "_message").style.color = "white";
             break
         default:
             console.log("received an invalid WS messageType");

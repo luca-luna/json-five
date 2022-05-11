@@ -3,6 +3,16 @@ body {
     color: #000000;
 }
 
+.dark {
+    background-color: #272633;
+    color: #dc7ee2
+}
+
+.light {
+    background-color: #eeb1ff;
+    color: #000000;
+}
+
 p{
     font-family: 'Work Sans', sans-serif;
 }

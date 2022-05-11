@@ -1,7 +1,9 @@
 import parse
-from database import message_collection, listHomepageMessages, listImages
+from database import message_collection, listHomepageMessages, listImages, get_theme
 from database import username_posted_collection
 from template import render_template
+
+THEME = "light"
 
 def generate_response(body: bytes, content_type: str = 'text/plain; charset=utf-8', response_code: str = '200 OK'):
     response = b'HTTP/1.1 ' + response_code.encode()
@@ -33,9 +35,10 @@ def file(filename, username=""):
         print("LISTIMAGES")
         #print(listImages())
         if username != "":
-            content = render_template(filename, {"logged_in_user": "Welcome, " + username + "!", "loop_data1": get_online_users(username), "loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
+            content = render_template(filename, {"body": get_theme(username), "logged_in_user": "Welcome, " + username + "!", "loop_data1": get_online_users(username), "loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
         else:
-            content = render_template(filename, {"logged_in_user": "",
+            content = render_template(filename, { "body": "body class=\"" + THEME + "\"",
+                                                 "logged_in_user": "",
                                                  "loop_data2": listHomepageMessages(),
                                                  "loop_data3": listImages()}).encode()
 

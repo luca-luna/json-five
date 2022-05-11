@@ -10,10 +10,11 @@ from TCPServer import MyTCPHandler
 from our_router import Route
 from parsing_request import parse_form, split_request, parse_request_line, parse_headers
 from template import render_template
+import response
 from response import file, redirect, notFound, websocket_handshake, generate_response, forbidden, response_301
 from websocket import compute_accept
 import database, random, json
-from database import xsrf_collection
+from database import xsrf_collection, mode_collection, is_theme
 import websocket
 import parse
 from database import image_collection, image_id_collection
@@ -39,6 +40,8 @@ def add_paths(router):
     router.add_route(Route('GET', "/connect_websocket.js", wsfunction))
     router.add_route(Route('POST', "/signup", signup))
     router.add_route(Route('POST', "/login", login))
+    router.add_route(Route('POST', "/dark", dark))
+    router.add_route(Route('POST', "/light", light))
     
     #ALWAYS Keeping this at last, if you wish to add more Routes, add it above this line
     router.add_route(Route('GET', "/", homepage))
@@ -250,6 +253,7 @@ def signup(request, handler):
     print(form_data, flush=True)
 
     username = form_data['signup-username']['input']
+    #mode_collection.insert_one({"username": username.decode(), "theme": "light"})
     username = escape_html(username.decode()).encode()
     password = form_data['signup-password']['input']
     salt = bcrypt.gensalt()
@@ -279,6 +283,7 @@ def login(request, handler):
     form_data = parse_form(body.strip(), boundary.encode())
 
     username = form_data['login-username']['input']
+    username_for_theme = form_data['login-username']['input']
     username = escape_html(username.decode()).encode()
     password = form_data['login-password']['input']
 
@@ -302,6 +307,8 @@ def login(request, handler):
             # print(cookie, flush=True)
             # print(redirect("/", cookie), flush=True)
 
+            if is_theme(username_for_theme) == False:
+                mode_collection.insert_one({"username": username.decode(), "theme": "light"})
             # generate a token and put it in the form
             token = parse.generateXSRFToken()
             xsrf_collection.insert_one({"xsrf_token": hashlib.sha256(token.encode()).digest(), "username": username})
@@ -314,3 +321,28 @@ def login(request, handler):
             handler.request.sendall(response_301("/", cookie))
 
     handler.request.sendall(response_301("/"))
+
+def dark(request, handler):
+    # Get parser info
+    theme = "dark"
+    username = get_username(request)
+
+    if username == "":
+        response.THEME = "dark"
+        handler.request.sendall(response_301("/"))
+    else:
+        mode_collection.update_one({"username": username}, {'$set': {"theme": theme}})
+
+        handler.request.sendall(response_301("/"))
+
+def light(request, handler):
+    # Get parser info
+    theme = "light"
+    username = get_username(request)
+
+    if username == "":
+        response.THEME = "light"
+        handler.request.sendall(response_301("/"))
+    else:
+        mode_collection.update_one({"username": username}, {'$set': {"theme": theme}})
+        handler.request.sendall(response_301("/"))

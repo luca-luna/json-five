@@ -18,6 +18,7 @@ image_collection = db["images"]
 image_id_collection = db['next_id_images']
 
 xsrf_collection = db["xsrf_tokens"]
+mode_collection = db["theme"]
 
 
 '''
@@ -28,6 +29,25 @@ dm_collection is for the dms
 this stores the messages and the usernames of both participants
 '''
 
+def get_theme(username):
+    theme = "light"
+    doc = mode_collection.find_one({"username": username})
+    print("ABC")
+    print(username)
+    print("THEME")
+    print(doc["theme"])
+    print("END XYZ")
+    if doc != None:
+        return "<body class=\"" + doc["theme"] + "\">"
+    else:
+        return "<body class=\"" + theme + "\">"
+
+def is_theme(username):
+    doc = mode_collection.find_one({"username": username})
+    if doc != None:
+        return True
+    else:
+        return False
 
 def create_id(collection):
     id = collection.find_one({})

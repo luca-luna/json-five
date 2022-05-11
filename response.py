@@ -85,7 +85,7 @@ def get_online_users(my_username):
     from TCPServer import MyTCPHandler
     for socket in MyTCPHandler.websocket_connections:
         print("socket", socket, flush=True)
-        if socket["username"] != my_username.encode():
+        if socket["username"] != my_username.encode() and socket["username"] != b'':
             users.append({"username_online": socket["username"].decode()})
     return users
 

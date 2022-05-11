@@ -13,6 +13,7 @@ from template import render_template
 from response import file, redirect, notFound, websocket_handshake, generate_response, forbidden, response_301
 from websocket import compute_accept
 import database, random, json
+from database import xsrf_collection
 import websocket
 import parse
 from database import image_collection, image_id_collection
@@ -86,9 +87,10 @@ def image_upload(request, handler):
     username = get_username(request)
     print("username", username, flush=True)
     xsrf_token = parsed_form['xsrf_token']['input'].decode()
-    print("xsrf token", xsrf_token, flush=True)
+    print("upload xsrf token -> ", xsrf_token, flush=True)
 
-    if username != "" and parse.verifyXSRFToken(xsrf_token, account_collection):
+    #if username != "" and parse.verifyXSRFToken(xsrf_token, account_collection):
+    if username != "" and parse.verifyXSRFToken(xsrf_token, xsrf_collection):
         print("adding message to DB", flush=True)
         image_path = database.addImage(username)
         print("IMAGE PATH")
@@ -117,7 +119,7 @@ def send_chat(request, handler):
     xsrf_token = parsed_form['xsrf_token']['input'].decode()
     print("xsrf token", xsrf_token, flush=True)
 
-    if username != "" and parse.verifyXSRFToken(xsrf_token, account_collection):
+    if username != "" and parse.verifyXSRFToken(xsrf_token, xsrf_collection):
         print("adding message to DB", flush=True)
         database.addHomepageMessage({"message": message, "username": username, "upvotes": 0})
     # print("inserted", flush=True)
@@ -299,6 +301,16 @@ def login(request, handler):
             cookie = b'Set-Cookie: id=' + cookie + b'; Max-Age=3600; HttpOnly'
             # print(cookie, flush=True)
             # print(redirect("/", cookie), flush=True)
+
+            # generate a token and put it in the form
+            token = parse.generateXSRFToken()
+            xsrf_collection.insert_one({"xsrf_token": hashlib.sha256(token.encode()).digest(), "username": username})
+            with open("front_end/index.html", "rb") as file:
+                file = file.read()
+            new = file.replace(b"{{token}}", token.encode())
+            with open("front_end/index.html", "wb") as file:
+                file.write(new)
+
             handler.request.sendall(response_301("/", cookie))
 
     handler.request.sendall(response_301("/"))

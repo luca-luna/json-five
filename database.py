@@ -17,6 +17,8 @@ dm_id_collection = db['next_id_dms']
 image_collection = db["images"]
 image_id_collection = db['next_id_images']
 
+xsrf_collection = db["xsrf_tokens"]
+
 
 '''
 message_collection is for the homepage messaging area

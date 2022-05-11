@@ -1,4 +1,6 @@
 import hashlib
+import secrets
+from database import xsrf_collection
 
 def fileType(filename):
 
@@ -17,6 +19,7 @@ def fileType(filename):
 def verifyXSRFToken(xsrf_token, account_collection):
 
     hashed_xsrf_token = hashlib.sha256(xsrf_token.encode()).digest()
+    #doc = account_collection.find_one({"xsrf_token": hashed_xsrf_token})
     doc = account_collection.find_one({"xsrf_token": hashed_xsrf_token})
 
     if doc is not None:
@@ -24,3 +27,8 @@ def verifyXSRFToken(xsrf_token, account_collection):
 
     else:
         return False
+
+def generateXSRFToken():
+
+    token = secrets.token_urlsafe(32)
+    return token

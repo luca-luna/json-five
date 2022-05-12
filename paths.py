@@ -93,7 +93,7 @@ def image_upload(request, handler):
     print("upload xsrf token -> ", xsrf_token, flush=True)
 
     #if username != "" and parse.verifyXSRFToken(xsrf_token, account_collection):
-    if username != "" and parse.verifyXSRFToken(xsrf_token, xsrf_collection):
+    if username != "" and parse.verifyXSRFToken(xsrf_token, request):
         print("adding message to DB", flush=True)
         image_path = database.addImage(username)
         print("IMAGE PATH")
@@ -122,7 +122,7 @@ def send_chat(request, handler):
     xsrf_token = parsed_form['xsrf_token']['input'].decode()
     print("xsrf token", xsrf_token, flush=True)
 
-    if username != "" and parse.verifyXSRFToken(xsrf_token, xsrf_collection):
+    if username != "" and parse.verifyXSRFToken(xsrf_token, request):
         print("adding message to DB", flush=True)
         database.addHomepageMessage({"message": message, "username": username, "upvotes": 0})
     # print("inserted", flush=True)
@@ -310,13 +310,13 @@ def login(request, handler):
             if is_theme(username_for_theme) == False:
                 mode_collection.insert_one({"username": username.decode(), "theme": "light"})
             # generate a token and put it in the form
-            token = parse.generateXSRFToken()
-            xsrf_collection.insert_one({"xsrf_token": hashlib.sha256(token.encode()).digest(), "username": username})
-            with open("front_end/index.html", "rb") as file:
-                file = file.read()
-            new = file.replace(b"{{token}}", token.encode())
-            with open("front_end/index.html", "wb") as file:
-                file.write(new)
+            # token = parse.generateXSRFToken()
+            # xsrf_collection.insert_one({"xsrf_token": hashlib.sha256(token.encode()).digest(), "username": username})
+            # with open("front_end/index.html", "rb") as file:
+            #     file = file.read()
+            # new = file.replace(b"{{token}}", token.encode())
+            # with open("front_end/index.html", "wb") as file:
+            #     file.write(new)
 
             handler.request.sendall(response_301("/", cookie))
 

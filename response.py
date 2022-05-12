@@ -1,7 +1,10 @@
+import hashlib
+
 import parse
-from database import message_collection, listHomepageMessages, listImages, get_theme
+from database import message_collection, listHomepageMessages, listImages, get_theme, xsrf_collection, account_collection
 from database import username_posted_collection
 from template import render_template
+
 
 THEME = "light"
 
@@ -35,9 +38,11 @@ def file(filename, username=""):
         print("LISTIMAGES")
         #print(listImages())
         if username != "":
-            content = render_template(filename, {"body": get_theme(username), "logged_in_user": "Welcome, " + username + "!", "loop_data1": get_online_users(username), "loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
+            token = parse.generateXSRFToken()
+            account_collection.update_one({'username': username.encode()}, {'$set': {'xsrf_token': hashlib.sha256(token.encode()).digest()}})
+            content = render_template(filename, {"token": token, "body": get_theme(username), "logged_in_user": "Welcome, " + username + "!", "loop_data1": get_online_users(username), "loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
         else:
-            content = render_template(filename, { "body": "body class=\"" + THEME + "\"",
+            content = render_template(filename, {"token": "", "body": "body class=\"" + THEME + "\"",
                                                  "logged_in_user": "",
                                                  "loop_data2": listHomepageMessages(),
                                                  "loop_data3": listImages()}).encode()

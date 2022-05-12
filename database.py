@@ -19,6 +19,7 @@ image_id_collection = db['next_id_images']
 
 xsrf_collection = db["xsrf_tokens"]
 mode_collection = db["theme"]
+account_collection = db["accounts"]
 
 
 '''

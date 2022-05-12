@@ -41,7 +41,7 @@ class Route:
             return False
         print("self path")
         print(self.path)
-        print("request.path")
+        print("request.path")   
         print(request.path)
         search_result = re.search('^' + self.path, request.path)
         print(search_result)

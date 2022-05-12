@@ -256,6 +256,9 @@ def signup(request, handler):
     #mode_collection.insert_one({"username": username.decode(), "theme": "light"})
     username = escape_html(username.decode()).encode()
     password = form_data['signup-password']['input']
+    if b' ' in username or b' ' in password:
+        handler.request.sendall(response_301("/"))
+        return
     salt = bcrypt.gensalt()
     password = bcrypt.hashpw(base64.b64encode(hashlib.sha256(password).digest()), salt)
 
@@ -265,6 +268,7 @@ def signup(request, handler):
         if entry["username"] == username:
             print("duplicate username", flush=True)
             handler.request.sendall(response_301("/"))
+            return
 
     print(username, password)
     account_collection.insert_one(

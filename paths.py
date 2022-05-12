@@ -328,7 +328,7 @@ def dark(request, handler):
     username = get_username(request)
 
     if username == "":
-        response.THEME = "dark"
+        response.THEME = "light"
         handler.request.sendall(response_301("/"))
     else:
         mode_collection.update_one({"username": username}, {'$set': {"theme": theme}})

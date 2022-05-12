@@ -24,6 +24,7 @@
 <div class="mt-3 container"></div>
 <h1>Pulled Pork Mac & Cheese</h1>
 
+<h3>Choose theme (must be logged in):</h3>
 <form action="/dark" id="dark" method="post" enctype="multipart/form-data">
     <input id="theme-selection" type="submit" value="dark" name="dark">
 </form>
@@ -35,6 +36,7 @@
     {{logged_in_user}}
 </h1>
 
+<h3>Sign up:</h3>
 <form action="/signup" id="signup-form" method="post" enctype="multipart/form-data">
    <label for="signup-username">Username: </label>
 <!--   <textarea id="signup-username" name="signup-username" cols="20" rows="1"></textarea>-->
@@ -47,6 +49,7 @@
    <input type="submit" value="Signup">
 </form>
 
+<h3>Login:</h3>
 <form action="/login" id="login-form" method="post" enctype="multipart/form-data">
    <label for="login-username">Username: </label>
 <!--   <textarea id="login-username" name="login-username" cols="20" rows="1"></textarea>-->

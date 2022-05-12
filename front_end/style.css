@@ -13,6 +13,14 @@ body {
     color: #000000;
 }
 
+.alert{
+    font-family: 'Work Sans', sans-serif;
+}
+
+.navbar-brand{
+    font-family: 'Bitter', serif;
+}
+
 p{
     font-family: 'Work Sans', sans-serif;
 }
@@ -28,6 +36,10 @@ h1{
 
 h2{
     font-family: 'Bitter', serif;
+}
+
+h3{
+    font-family: 'Work Sans', sans-serif;
 }
 
 button{

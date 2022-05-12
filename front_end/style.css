@@ -100,7 +100,7 @@ button:active{
     background-color:rgb(248, 77, 25);
 }
 
-#submit_button{
+.submit_button{
     background-color:rgb(78, 90, 255);
     border-radius: 3px 3px 3px 3px;
     padding: 10px;
@@ -111,11 +111,11 @@ button:active{
 }
 
 
-#submit_button:hover{
+.submit_button:hover{
     background-color:rgb(51, 64, 245);
 }
 
-#submit_button:active{
+.submit_button:active{
     background-color:rgb(35, 48, 233);
 }
 
@@ -151,6 +151,19 @@ input:hover{
 
 #online_count{
     display: inline-block;
+}
+
+#theme_button{
+    display: inline-block;
+    padding: 20px;
+    background-color:rgb(78, 90, 255);
+    border-radius: 3px 3px 3px 3px;
+    padding: 10px 10px 10px 10px;
+    margin: 10px 10px 10px 10px;
+    font-size: 12px;
+    color: white;
+    border: none;
+    font-family: 'Work Sans', sans-serif;
 }
 
 @keyframes recent {

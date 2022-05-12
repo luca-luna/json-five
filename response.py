@@ -42,7 +42,7 @@ def file(filename, username=""):
             account_collection.update_one({'username': username.encode()}, {'$set': {'xsrf_token': hashlib.sha256(token.encode()).digest()}})
             content = render_template(filename, {"token": token, "body": get_theme(username), "logged_in_user": "Welcome, " + username + "!", "loop_data1": get_online_users(username), "loop_data2": listHomepageMessages(), "loop_data3": listImages()}).encode()
         else:
-            content = render_template(filename, {"token": "", "body": "body class=\"" + THEME + "\"",
+            content = render_template(filename, {"token": "", "body": "<body class=\"" + THEME + "\">",
                                                  "logged_in_user": "",
                                                  "loop_data2": listHomepageMessages(),
                                                  "loop_data3": listImages()}).encode()
